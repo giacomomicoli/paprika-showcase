@@ -28,7 +28,8 @@ services:
     networks:
       - paprika-network
     depends_on:
-      - app
+      app:
+        condition: service_healthy
 
 networks:
   paprika-network:

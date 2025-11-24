@@ -1,6 +1,7 @@
 """
 Paprika Showcase - Simple Flask Application
 """
+import sys
 from flask import Flask, jsonify
 
 app = Flask(__name__)
@@ -9,10 +10,11 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     """Home endpoint"""
+    python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     return jsonify({
         'message': 'Welcome to Paprika Showcase!',
         'status': 'running',
-        'python_version': '3.10'
+        'python_version': python_version
     })
 
 

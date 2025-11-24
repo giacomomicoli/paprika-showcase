@@ -12,13 +12,13 @@ echo ""
 
 # Test app container health
 echo "2. Testing app container health endpoint..."
-APP_HEALTH=$(docker exec paprika-app curl -s http://localhost:8000/health)
+APP_HEALTH=$(docker exec paprika-app curl -s http://localhost:8000/health 2>/dev/null || echo "Container not running or app not responding")
 echo "Response: $APP_HEALTH"
 echo ""
 
 # Test main endpoint
 echo "3. Testing app main endpoint..."
-APP_MAIN=$(docker exec paprika-app curl -s http://localhost:8000/)
+APP_MAIN=$(docker exec paprika-app curl -s http://localhost:8000/ 2>/dev/null || echo "Container not running or app not responding")
 echo "Response: $APP_MAIN"
 echo ""
 
