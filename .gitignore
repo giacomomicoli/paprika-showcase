@@ -8,10 +8,14 @@ __pycache__/
 
 # Docker
 *.dockerignore
-Dockerfile
-.docker-compose.yml
 
 # IDE
 .vscode/
 .idea/
 *.sublime-*
+# Environment
+.env
+
+# Output
+output/*
+!output/.temp

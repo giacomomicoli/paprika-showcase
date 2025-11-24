@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: paprika-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - FLASK_DEBUG=true
+    volumes:
+      # Mount modular source code for hot reload
+      - ./app:/app/app
+      - ./main.py:/app/main.py
+      # Mount output directory to persist generated files
+      - ./output:/app/output
+    networks:
+      - paprika-network
+    expose:
+      - "8000"
+
+  caddy:
+    image: caddy:latest
+    container_name: paprika-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - paprika-network
+    depends_on:
+      - app
+
+networks:
+  paprika-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
