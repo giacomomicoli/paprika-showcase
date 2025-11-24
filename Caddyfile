@@ -1,4 +1,4 @@
-paprika.local {
+http://paprika.local {
     reverse_proxy app:8000
     
     log {

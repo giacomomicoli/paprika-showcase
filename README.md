@@ -60,6 +60,20 @@ paprika.local (Caddy) → app:8000 (Python Flask + Gunicorn)
 
 ## Development
 
+### Quick Test
+
+Run the test script to verify the setup:
+
+```bash
+./test.sh
+```
+
+This will test:
+- Container status
+- Health endpoints
+- Caddy reverse proxy
+- Python version
+
 ### Application Structure
 
 ```
