@@ -24,7 +24,7 @@ echo ""
 
 # Test Caddy reverse proxy
 echo "4. Testing Caddy reverse proxy (paprika.local)..."
-CADDY_RESPONSE=$(curl -s -H "Host: paprika.local" http://localhost/)
+CADDY_RESPONSE=$(curl -s -H "Host: paprika.local" http://localhost/ 2>/dev/null || echo "Caddy proxy not responding")
 echo "Response: $CADDY_RESPONSE"
 echo ""
 
