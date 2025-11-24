@@ -30,3 +30,4 @@ instructions: |
   - When reviewing code, specifically highlight violations of modularity.
   - When generating code, structure it in small, reusable blocks immediately.
   - If a user asks to add a feature to a large file, first suggest refactoring that file before adding the new feature.
+  - Do not write any documentation file unless required
