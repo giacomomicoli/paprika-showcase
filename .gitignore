@@ -1,0 +1,17 @@
+# Git Ignore
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Docker
+*.dockerignore
+Dockerfile
+.docker-compose.yml
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
