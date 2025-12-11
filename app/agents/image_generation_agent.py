@@ -9,7 +9,8 @@ from app.config import settings
 from app.agents.prompts import (
     IMAGE_GENERATION_SYSTEM_INSTRUCTION,
     FIRST_IMAGE_PROMPT_TEMPLATE,
-    SEQUENTIAL_IMAGE_PROMPT_TEMPLATE
+    SEQUENTIAL_IMAGE_PROMPT_TEMPLATE,
+    FRAME_EDIT_PROMPT_TEMPLATE
 )
 from typing import Optional
 import base64
@@ -86,6 +87,65 @@ class ImageGenerationAgent:
         )
         
         # Create multimodal request with previous image and structured prompt
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=[
+                {
+                    'parts': [
+                        {
+                            'inline_data': {
+                                'mime_type': 'image/png',
+                                'data': image_base64
+                            }
+                        },
+                        {
+                            'text': prompt
+                        }
+                    ]
+                }
+            ]
+        )
+        
+        return self._extract_image_from_response(response)
+    
+    def edit_frame(
+        self, 
+        current_image_path: str, 
+        edit_instructions: str,
+        storyboard_context: str
+    ) -> bytes:
+        """
+        Edit an existing frame based on user instructions.
+        
+        Args:
+            current_image_path: Path to the current frame image to edit
+            edit_instructions: User's instructions on how to modify the frame
+            storyboard_context: The overall storyboard description for context
+        
+        Returns:
+            Image bytes of the edited frame
+        
+        Raises:
+            FileNotFoundError: If the current image file doesn't exist
+            ValueError: If the file path is invalid
+        """
+        # Validate file exists and is readable
+        if not os.path.isfile(current_image_path):
+            raise FileNotFoundError(f"Current image not found: {current_image_path}")
+        
+        # Read the image file and encode to base64
+        with open(current_image_path, 'rb') as f:
+            image_bytes = f.read()
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        
+        # Construct prompt for frame editing
+        prompt = FRAME_EDIT_PROMPT_TEMPLATE.format(
+            system_instruction=IMAGE_GENERATION_SYSTEM_INSTRUCTION,
+            edit_instructions=edit_instructions,
+            storyboard_context=storyboard_context
+        )
+        
+        # Create multimodal request with current image and edit instructions
         response = self.client.models.generate_content(
             model=self.model_name,
             contents=[

@@ -4,7 +4,9 @@ from app.models.storyboard import (
     StoryboardResponse,
     StoryboardGenerationResponse,
     FrameData,
-    StoryboardOutput
+    StoryboardOutput,
+    FrameEditRequest,
+    FrameEditResponse
 )
 
 __all__ = [
@@ -12,5 +14,7 @@ __all__ = [
     'StoryboardResponse',
     'StoryboardGenerationResponse',
     'FrameData',
-    'StoryboardOutput'
+    'StoryboardOutput',
+    'FrameEditRequest',
+    'FrameEditResponse'
 ]

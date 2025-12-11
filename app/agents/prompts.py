@@ -98,3 +98,33 @@ The image provided shows the previous frame in this storyboard sequence. Maintai
 - Maintain visual continuity with the reference image
 </style_constraints>
 """
+
+FRAME_EDIT_PROMPT_TEMPLATE = """<system_instruction>
+{system_instruction}
+</system_instruction>
+
+<task>
+Edit/modify the provided storyboard frame image according to the user's instructions while maintaining the overall style and visual consistency.
+</task>
+
+<original_storyboard_context>
+This frame is part of a larger storyboard sequence. The overall storyboard description is:
+{storyboard_context}
+</original_storyboard_context>
+
+<current_frame>
+The image provided shows the current frame that needs to be modified.
+</current_frame>
+
+<edit_instructions>
+{edit_instructions}
+</edit_instructions>
+
+<style_constraints>
+- Maintain the pencil black and white sketch style
+- Keep the same artistic style as the original frame
+- Single frame composition (not a multi-panel layout)
+- One moment in time, one shot
+- Apply the requested changes while preserving other elements unless specifically instructed to change them
+</style_constraints>
+"""

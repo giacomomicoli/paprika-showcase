@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paprika - AI Storyboard Generator</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Paprika" class="logo-image">
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section id="heroSection" class="hero-section">
+                <h1 class="hero-title">Create Visual Storyboards with AI</h1>
+                <p class="hero-description">
+                    Describe your scene, and watch as AI transforms your words into a beautiful 
+                    visual storyboard with multiple frames and a downloadable PDF.
+                </p>
+            </section>
+
+            <!-- Input Container -->
+            <div id="inputContainer" class="input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="textInput" 
+                        class="text-input" 
+                        placeholder="Describe your storyboard idea... For example: 'A hero's journey through a mystical forest, encountering magical creatures, crossing a dangerous bridge over a chasm, and finally reaching a glowing ancient temple at sunset.'"
+                        rows="4"
+                    ></textarea>
+                    <div class="input-actions">
+                        <span id="charCount" class="char-count">0 characters</span>
+                        <button id="generateBtn" class="btn btn-primary" disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            Generate Storyboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Container -->
+            <div id="loadingContainer" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Creating your storyboard...</p>
+                <p class="loading-subtext">This may take a few minutes</p>
+                
+                <div class="progress-steps">
+                    <div class="progress-step" data-step="1">
+                        <div class="step-icon">1</div>
+                        <span class="step-text">Analyzing your description</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-icon">2</div>
+                        <span class="step-text">Generating frame images</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-icon">3</div>
+                        <span class="step-text">Creating PDF storyboard</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Container -->
+            <div id="errorContainer" class="error-container">
+                <div class="error-icon">⚠️</div>
+                <h2 class="error-title">Generation Failed</h2>
+                <p id="errorMessage" class="error-message">An error occurred while generating your storyboard.</p>
+                <button class="btn btn-primary" onclick="newGeneration()">
+                    Try Again
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section">
+                <div class="results-header">
+                    <div>
+                        <h2 class="results-title">Your Storyboard</h2>
+                        <p id="frameCount" class="char-count">0 frames generated</p>
+                    </div>
+                    <div class="results-actions">
+                        <button class="btn btn-secondary" onclick="newGeneration()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            New Storyboard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Frames Grid -->
+                <div id="framesGrid" class="frames-grid"></div>
+
+                <!-- PDF Download Section -->
+                <div class="pdf-section">
+                    <div class="pdf-info">
+                        <div class="pdf-icon">📄</div>
+                        <div class="pdf-details">
+                            <h3>Download Complete Storyboard</h3>
+                            <p>Get your storyboard as a professionally formatted PDF</p>
+                        </div>
+                    </div>
+                    <a id="pdfDownloadLink" href="#" class="btn btn-primary" target="_blank" download>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download PDF
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by AI • Built for Paprika 🌶️</p>
+        </footer>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <img id="modalImage" class="modal-image" src="" alt="Frame preview">
+        </div>
+    </div>
+
+    <!-- Edit Frame Modal -->
+    <div id="editModalOverlay" class="edit-modal-overlay">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h3 class="edit-modal-title">Edit Frame <span id="editFrameNumber"></span></h3>
+                <button class="edit-modal-close" onclick="closeEditModal()">×</button>
+            </div>
+            
+            <!-- Edit Form -->
+            <div id="editFormContainer" class="edit-modal-body">
+                <div class="edit-preview-container">
+                    <div class="edit-preview-image">
+                        <label class="edit-form-label">Current Frame</label>
+                        <img id="editPreviewImage" src="" alt="Frame to edit">
+                    </div>
+                    <div class="edit-form-container">
+                        <div>
+                            <label class="edit-form-label">Edit Instructions</label>
+                            <textarea 
+                                id="editInstructionsInput" 
+                                class="edit-instructions-input"
+                                placeholder="Describe how you want to modify this frame... For example: 'Add a sunset in the background' or 'Change the character's expression to surprised' or 'Remove the tree on the left side'"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div id="editLoadingContainer" class="edit-loading">
+                <div class="edit-loading-spinner"></div>
+                <p class="edit-loading-text">Editing frame...</p>
+            </div>
+            
+            <div class="edit-modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button id="applyEditBtn" class="btn btn-primary" onclick="applyFrameEdit()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Apply Edit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts (modular architecture) -->
+    <script src="{{ url_for('static', filename='js/state.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/frame-edit.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/storyboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

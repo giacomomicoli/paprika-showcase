@@ -69,3 +69,51 @@ class StoryboardOutput(BaseModel):
         ..., 
         description="List of frame descriptions"
     )
+
+
+class FrameEditRequest(BaseModel):
+    """Request model for editing a single frame."""
+    session_id: str = Field(
+        ...,
+        min_length=1,
+        description="The session ID of the storyboard"
+    )
+    frame_number: int = Field(
+        ...,
+        ge=1,
+        description="The frame number to edit (1-based)"
+    )
+    edit_instructions: str = Field(
+        ...,
+        min_length=1,
+        description="Instructions for how to edit the frame"
+    )
+    storyboard_context: str = Field(
+        ...,
+        min_length=1,
+        description="The original storyboard description for context"
+    )
+
+
+class FrameEditResponse(BaseModel):
+    """Response model for frame edit operation."""
+    success: bool = Field(
+        ...,
+        description="Whether the frame edit was successful"
+    )
+    message: str = Field(
+        ...,
+        description="Status message"
+    )
+    frame_number: Optional[int] = Field(
+        None,
+        description="The frame number that was edited"
+    )
+    image_path: Optional[str] = Field(
+        None,
+        description="Path to the edited frame image"
+    )
+    pdf_regenerated: Optional[bool] = Field(
+        None,
+        description="Whether the PDF was regenerated"
+    )
