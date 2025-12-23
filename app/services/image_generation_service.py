@@ -4,6 +4,7 @@ Image Generation Service Module
 Business logic for sequential image generation from storyboard frames.
 """
 import os
+import json
 from typing import List, Tuple, Generator, Dict, Any
 from app.agents.image_generation_agent import ImageGenerationAgent
 from app.models.storyboard import FrameData
@@ -247,6 +248,57 @@ class ImageGenerationService:
         frame_files.sort()
         
         return [os.path.join(session_dir, f) for f in frame_files]
+    
+    def save_frame_descriptions(self, frames: List[FrameData], session_id: str) -> None:
+        """
+        Save frame descriptions to a metadata file.
+        
+        Args:
+            frames: List of FrameData with descriptions
+            session_id: Unique session identifier
+        """
+        session_dir = os.path.join(settings.OUTPUT_DIR, session_id)
+        os.makedirs(session_dir, exist_ok=True)
+        
+        metadata = {
+            'frames': [
+                {
+                    'frame_number': frame.frame_number,
+                    'description': frame.description
+                }
+                for frame in frames
+            ]
+        }
+        
+        metadata_path = os.path.join(session_dir, 'metadata.json')
+        with open(metadata_path, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, indent=2, ensure_ascii=False)
+    
+    def load_frame_descriptions(self, session_id: str) -> List[str]:
+        """
+        Load frame descriptions from metadata file.
+        
+        Args:
+            session_id: Unique session identifier
+        
+        Returns:
+            List of frame descriptions in order, or empty list if not found
+        """
+        session_dir = os.path.join(settings.OUTPUT_DIR, session_id)
+        metadata_path = os.path.join(session_dir, 'metadata.json')
+        
+        if not os.path.isfile(metadata_path):
+            return []
+        
+        try:
+            with open(metadata_path, 'r', encoding='utf-8') as f:
+                metadata = json.load(f)
+            
+            # Sort by frame_number and extract descriptions
+            frames = sorted(metadata['frames'], key=lambda x: x['frame_number'])
+            return [frame['description'] for frame in frames]
+        except (json.JSONDecodeError, KeyError, IOError):
+            return []
     
     def delete_pdf(self, session_id: str) -> bool:
         """

@@ -110,10 +110,15 @@ class StoryboardService:
             # Step 4: Save images to disk
             image_paths = self.image_service.save_images(generated_images, session_id)
             
-            # Step 5: Generate PDF from images
+            # Step 4.5: Save frame descriptions metadata
+            self.image_service.save_frame_descriptions(storyboard_output.frames, session_id)
+            
+            # Step 5: Generate PDF from images with descriptions
+            frame_descriptions = [frame.description for frame in storyboard_output.frames]
             pdf_path = self.pdf_generator.create_storyboard_pdf(
                 image_paths=image_paths,
-                session_id=session_id
+                session_id=session_id,
+                frame_descriptions=frame_descriptions
             )
             
             return StoryboardGenerationResponse(

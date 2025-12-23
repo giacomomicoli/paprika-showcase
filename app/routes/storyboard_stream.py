@@ -119,9 +119,11 @@ def edit_frame():
         
         # Regenerate PDF with updated frames
         frame_paths = image_service.get_session_frame_paths(edit_request.session_id)
+        frame_descriptions = image_service.load_frame_descriptions(edit_request.session_id)
         pdf_path = pdf_generator.create_storyboard_pdf(
             image_paths=frame_paths,
-            session_id=edit_request.session_id
+            session_id=edit_request.session_id,
+            frame_descriptions=frame_descriptions if frame_descriptions else None
         )
         
         response = FrameEditResponse(

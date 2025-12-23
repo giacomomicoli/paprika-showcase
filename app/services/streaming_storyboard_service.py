@@ -121,10 +121,15 @@ class StreamingStoryboardService(StoryboardService):
             # Save images to disk
             image_paths = self.image_service.save_images(generated_images, session_id)
             
-            # Generate PDF
+            # Save frame descriptions metadata
+            self.image_service.save_frame_descriptions(storyboard_output.frames, session_id)
+            
+            # Generate PDF with descriptions
+            frame_descriptions = [frame.description for frame in storyboard_output.frames]
             pdf_path = self.pdf_generator.create_storyboard_pdf(
                 image_paths=image_paths,
-                session_id=session_id
+                session_id=session_id,
+                frame_descriptions=frame_descriptions
             )
             
             yield {
